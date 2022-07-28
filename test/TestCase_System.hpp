@@ -28,6 +28,7 @@ protected:
   virtual void TearDown();
 
   void testPlugInManager(void);
+  void testOwnPlugInManager(void);
 };
 
 #endif /* __TESTCASE_SYSTEM_HPP__ */
