@@ -56,20 +56,13 @@ TEST_F(TestCase_System, testOwnPlugInManager)
   class MyPlugIn : public IPlugIn
   {
   public:
-    MyPlugIn();
-    virtual ~MyPlugIn();
+    MyPlugIn(){};
+    virtual ~MyPlugIn(){};
 
-    /* @desc initialize at loading the filter plug-in shared object such as .so */
-    virtual void onLoad(void);
-    /* @desc uninitialize at unloading the filter plug-in shared object such as .so */
-    virtual void onUnload(void);
-    /* @desc report your filter plug-in's unique id
-       @return unique plug-in id. may use uuid. */
-    virtual std::string getId(void);
-    /* @desc this is expected to use by strategy
-       @return new YourFilter()'s result */
-    virtual std::shared_ptr<IPlugIn> newInstance(void);
-    virtual std::string toString(void){ return "FilterPlugIn"; };
+    virtual void onLoad(void){};
+    virtual void onUnload(void){};
+    virtual std::string getId(void){return "";};
+    virtual std::string toString(void){ return "MyPlugIn"; };
   };
 
   typedef TPlugInManager<MyPlugIn> MyPlugInManager;
@@ -84,16 +77,15 @@ TEST_F(TestCase_System, testOwnPlugInManager)
     std::vector<std::string> plugInIds = pManager->getPlugInIds();
     for(auto& aPlugInId : plugInIds){
       EXPECT_TRUE( pManager->hasPlugIn( aPlugInId ) );
-      EXPECT_NE( nullptr, pManager->getPlugIn( aPlugInId ) );
+      EXPECT_TRUE( nullptr != pManager->getPlugIn( aPlugInId ) );
+      std::cout << "MyPlugInManager::newInstanceById()" << std::endl;
       std::shared_ptr<MyPlugIn> pPlugIn = MyPlugInManager::newInstanceById( aPlugInId );
-      EXPECT_NE( nullptr, pPlugIn );
+      EXPECT_TRUE( nullptr != pPlugIn );
     }
     pManager->dump();
 
-    EXPECT_FALSE( MyPlugInManager::newInstanceById( "hogehogehoge" ) );
+    EXPECT_TRUE( MyPlugInManager::newInstanceById( "hogehogehoge" ) == nullptr );
 
     pManager->terminate();
   }
-
-
 }

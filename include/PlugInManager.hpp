@@ -32,7 +32,7 @@ public:
   virtual void onLoad(void) = 0;
   virtual void onUnload(void) = 0;
   virtual std::string getId(void) = 0;
-  virtual std::shared_ptr<IPlugIn> newInstance(void) = 0;
+  virtual IPlugIn* newInstance(void) = 0;
 
   // for PlugIn Manager
   virtual void load(void* libraryNativeHandle);
@@ -134,7 +134,7 @@ public:
     if( mpManager ){
       std::shared_ptr<IPlugIn> pPlugIn = mpManager->getPlugIn( plugInId );
       if( pPlugIn ){
-        pPlugInInstance = std::dynamic_pointer_cast<IFCLASS>( pPlugIn->newInstance() );
+        pPlugInInstance = std::shared_ptr<IFCLASS>( reinterpret_cast<IFCLASS*>( pPlugIn->newInstance() ) );
       }
     }
 
