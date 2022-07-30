@@ -89,3 +89,30 @@ TEST_F(TestCase_System, testOwnPlugInManager)
     pManager->terminate();
   }
 }
+
+#define __PLUGINMANAGER_TEST__
+#include "../example_plugin/ExamplePlugIn.hpp"
+
+TEST_F(TestCase_System, testExamplePlugInManager)
+{
+  ExamplePlugInManager::setPlugInPath("lib/example-plugin");
+  std::weak_ptr<ExamplePlugInManager> pWeakManager = ExamplePlugInManager::getManager();
+  std::shared_ptr<ExamplePlugInManager> pManager = pWeakManager.lock();
+  if( pManager ){
+    pManager->initialize();
+
+    std::vector<std::string> plugInIds = pManager->getPlugInIds();
+    for(auto& aPlugInId : plugInIds){
+      EXPECT_TRUE( pManager->hasPlugIn( aPlugInId ) );
+      EXPECT_TRUE( nullptr != pManager->getPlugIn( aPlugInId ) );
+      std::cout << "ExamplePlugInManager::newInstanceById()" << std::endl;
+      std::shared_ptr<ExamplePlugInBase> pPlugIn = ExamplePlugInManager::newInstanceById( aPlugInId );
+      EXPECT_TRUE( nullptr != pPlugIn );
+    }
+    pManager->dump();
+
+    EXPECT_TRUE( ExamplePlugInManager::newInstanceById( "hogehogehoge" ) == nullptr );
+
+    pManager->terminate();
+  }
+}

@@ -61,7 +61,24 @@ $(TEST_OBJS): $(TEST_SRCS)
 -include $(INTEG_DEPS)
 
 
-# --- Build for PLUGINMGR -------------------
+# --- Build for PLUGINMGR(shared) ------------
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Linux)
+	PLUGINMGR_SO_TARGET = $(LIB_DIR)/libpluginmanager.so
+endif
+ifeq ($(UNAME),Darwin)
+	PLUGINMGR_SO_TARGET = $(LIB_DIR)/libpluginmanager.dylib
+endif
+
+pluginmanagershared: $(PLUGINMGR_SO_TARGET)
+.PHONY: pluginmanagershared
+
+$(PLUGINMGR_SO_TARGET): $(PLUGINMGR_OBJS)
+	@[ -d $(LIB_DIR) ] || mkdir -p $(LIB_DIR)
+	$(CXX) $(LDFLAGS) $(PLUGINMGR_OBJS) $(SHARED_CXXFLAGS) -o $@ $(LDLIBS)
+
+
+# --- Build for PLUGINMGR(static) -------------------
 PLUGINMGR_TARGET = $(LIB_DIR)/libpluginmgr.a
 PLUGINMGR_DEPS = $(PLUGINMGR_OBJS:.o=.d)
 
@@ -91,9 +108,41 @@ $(TEST_TARGET): $(TEST_OBJS)
 	$(CXX) $(LDFLAGS) $(TEST_LDLIBS) $(TEST_OBJS) $(TEST_LIBS) -o $@ -lgtest_main -lgtest
 
 
+
+# --- Build for plug-in example(shared) ------------
+EXP_DIR=./example_plugin
+EXP_SRCS = $(wildcard $(EXP_DIR)/*.cpp)
+LIB_EXP_DIR=$(LIB_DIR)/example-plugin
+EXP_OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(EXP_SRCS:.cpp=.o)))
+
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Linux)
+	EXP_SO_TARGET = $(LIB_EXP_DIR)/libplugin_example.so
+endif
+ifeq ($(UNAME),Darwin)
+	EXP_SO_TARGET = $(LIB_EXP_DIR)/libplugin_example.dylib
+endif
+EXP_DEPS = $(EXP_OBJS:.o=.d)
+
+pluginexample: $(EXP_SO_TARGET)
+.PHONY: pluginexample
+
+$(EXP_SO_TARGET): $(EXP_OBJS)
+	@[ -d $(LIB_DIR) ] || mkdir -p $(LIB_DIR)
+	@[ -d $(LIB_EXP_DIR) ] || mkdir -p $(LIB_EXP_DIR)
+	$(CXX) $(LDFLAGS) $(EXP_OBJS) $(SHARED_CXXFLAGS) -o $@ $(LDLIBS) $(PLUGINMGR_SO_TARGET)
+
+$(EXP_OBJS): $(EXP_SRCS)
+	@[ -d $(OBJ_DIR) ] || mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -I $(INC_DIR) -c $(EXP_DIR)/$(notdir $(@:.o=.cpp)) -o $@
+
+-include $(EXP_DEPS)
+
+
+
 .PHONY: all
-all: $(PLUGINMGR_TARGET) $(TEST_TARGET)
+all: $(PLUGINMGR_TARGET) $(PLUGINMGR_SO_TARGET) $(TEST_TARGET) $(EXP_SO_TARGET)
 
 # --- clean up ------------------------
 clean:
-	rm -f $(TARGET) $(TEST_TARGET) $(INTEG_TARGET) $(OBJS) $(PLUGINMGR_DEPS) $(TEST_OBJS) $(INTEG_OBJS) $(INTEG_DEPS)
+	rm -f $(TARGET) $(TEST_TARGET) $(INTEG_TARGET) $(OBJS) $(PLUGINMGR_OBJS) $(PLUGINMGR_DEPS) $(PLUGINMGR_SO_OBJS) $(PLUGINMGR_SO_DEPS)$(TEST_OBJS) $(INTEG_OBJS) $(INTEG_DEPS) $(EXP_OBJS) $(EXP_DEPS)
