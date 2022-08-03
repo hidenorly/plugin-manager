@@ -124,6 +124,24 @@ public:
     return mpManager;
   }
 
+  // do not use with shared_ptr. and the instance is alive before terminate().
+  static IFCLASS* getRawPlugInInstanceById(std::string plugInId){
+    IFCLASS* pPlugInInstance = nullptr;
+
+    if( !mpManager ){
+      getManager();
+    }
+
+    if( mpManager ){
+      std::shared_ptr<IPlugIn> pPlugIn = mpManager->getPlugIn( plugInId );
+      if( pPlugIn ){
+        pPlugInInstance = reinterpret_cast<IFCLASS*>( pPlugIn.get() );
+      }
+    }
+
+    return pPlugInInstance;
+  }
+
   static std::shared_ptr<IFCLASS> newInstanceById(std::string plugInId){
     std::shared_ptr<IFCLASS> pPlugInInstance = nullptr;
 

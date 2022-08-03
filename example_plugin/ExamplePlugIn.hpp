@@ -35,6 +35,7 @@ public:
         @return new YourFilter()'s result */
     virtual IPlugIn* newInstance(void) = 0;
     virtual std::string toString(void){ return "NoPlugIn"; };
+    virtual void doSomething(void) = 0;
 };
 
 typedef TPlugInManager<ExamplePlugInBase> ExamplePlugInManager;

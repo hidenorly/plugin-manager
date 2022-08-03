@@ -104,13 +104,25 @@ TEST_F(TestCase_System, testExamplePlugInManager)
     std::vector<std::string> plugInIds = pManager->getPlugInIds();
     for(auto& aPlugInId : plugInIds){
       EXPECT_TRUE( pManager->hasPlugIn( aPlugInId ) );
-      EXPECT_TRUE( nullptr != pManager->getPlugIn( aPlugInId ) );
-      std::cout << "ExamplePlugInManager::newInstanceById()" << std::endl;
-      std::shared_ptr<ExamplePlugInBase> pPlugIn = ExamplePlugInManager::newInstanceById( aPlugInId );
-      EXPECT_TRUE( nullptr != pPlugIn );
+      ExamplePlugInBase* thePlugIn = ExamplePlugInManager::getRawPlugInInstanceById( aPlugInId ); // do not use with shared_ptr. and the instance is alive before terminate.
+      if( thePlugIn ){
+        thePlugIn->doSomething();
+      }
     }
+ 
+    std::cout << "ExamplePlugInManager::newInstanceById()" << std::endl;
+    for(auto& aPlugInId : plugInIds){
+      std::shared_ptr<ExamplePlugInBase> thePlugIn = ExamplePlugInManager::newInstanceById( aPlugInId );
+      EXPECT_TRUE( nullptr != thePlugIn );
+      if( thePlugIn ){
+        thePlugIn->doSomething();
+      }
+    }
+  
+    std::cout << "ExamplePlugInManager::dump()" << std::endl;
     pManager->dump();
 
+    std::cout << "ExamplePlugInManager::newInstanceById(\"hogehogehoe\")" << std::endl;
     EXPECT_TRUE( ExamplePlugInManager::newInstanceById( "hogehogehoge" ) == nullptr );
 
     pManager->terminate();

@@ -50,6 +50,10 @@ public:
   	std::cout << "ConcreteExamplePlugIn::newInstance" << std::endl;
     return new ConcreteExamplePlugIn();
   }
+
+  virtual void doSomething(void){
+    std::cout << "ConcreteExamplePlugIn::doSomething" << std::endl;
+  };
 };
 
 
