@@ -31,21 +31,21 @@ public:
   };
   virtual std::string toString(void){ return "ConcreteExamplePlugIn"; };
 
-  /* @desc initialize at loading the filter plug-in shared object such as .so */
+  /* @desc initialize at loading the  plug-in shared object such as .so */
   virtual void onLoad(void){
     std::cout << "ConcreteExamplePlugIn::onLoad" << std::endl;
   }
-  /* @desc uninitialize at unloading the filter plug-in shared object such as .so */
+  /* @desc uninitialize at unloading the  plug-in shared object such as .so */
   virtual void onUnload(void){
     std::cout << "ConcreteExamplePlugIn::onUnload" << std::endl;
   }
-  /* @desc report your filter plug-in's unique id
+  /* @desc report your plug-in's unique id
      @return unique plug-in id. may use uuid. */
   virtual std::string getId(void){
     return std::string("ConcreteExamplePlugIn");
   }
   /* @desc this is expected to use by strategy
-     @return new YourFilter()'s result */
+     @return new YourPlugIn's result */
   virtual IPlugIn* newInstance(void){
   	std::cout << "ConcreteExamplePlugIn::newInstance" << std::endl;
     return new ConcreteExamplePlugIn();

@@ -16,6 +16,7 @@
 
 #include "TestCase_System.hpp"
 #include "PlugInManager.hpp"
+#include <cassert>
 
 TestCase_System::TestCase_System()
 {
@@ -41,7 +42,9 @@ TEST_F(TestCase_System, testPlugInManager)
   std::vector<std::string> plugInIds = pPlugInManager->getPlugInIds();
   for(auto& aPlugInId : plugInIds){
     EXPECT_TRUE( pPlugInManager->hasPlugIn( aPlugInId ) );
-    EXPECT_NE( nullptr, pPlugInManager->getPlugIn( aPlugInId ) );
+    std::shared_ptr<IPlugIn> thePlugIn = pPlugInManager->getPlugIn( aPlugInId );
+    EXPECT_NE( nullptr, thePlugIn );
+    EXPECT_TRUE( thePlugIn->getType() == "undefined" );
   }
   pPlugInManager->dump();
 
@@ -106,6 +109,7 @@ TEST_F(TestCase_System, testExamplePlugInManager)
       EXPECT_TRUE( pManager->hasPlugIn( aPlugInId ) );
       ExamplePlugInBase* thePlugIn = ExamplePlugInManager::getRawPlugInInstanceById( aPlugInId ); // do not use with shared_ptr. and the instance is alive before terminate.
       if( thePlugIn ){
+        assert( thePlugIn->getType() == "ExamplePlugInBase" );
         thePlugIn->doSomething();
       }
     }

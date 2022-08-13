@@ -24,15 +24,18 @@ public:
     ExamplePlugInBase(){};
     virtual ~ExamplePlugInBase(){};
 
-    /* @desc initialize at loading the filter plug-in shared object such as .so */
+    /* @desc initialize at loading the  plug-in shared object such as .so */
     virtual void onLoad(void){};
-    /* @desc uninitialize at unloading the filter plug-in shared object such as .so */
+    /* @desc uninitialize at unloading the  plug-in shared object such as .so */
     virtual void onUnload(void){};
-    /* @desc report your filter plug-in's unique id
+    /* @desc report your  plug-in's unique id
         @return unique plug-in id. may use uuid. */
     virtual std::string getId(void){return "nothing";};
+    /* @desc report plugin type
+     @return plug-in type. */
+      virtual std::string getType(void){ return "ExamplePlugInBase"; };
     /* @desc this is expected to use by strategy
-        @return new YourFilter()'s result */
+        @return new YourConcreteClass()'s instanciated result */
     virtual IPlugIn* newInstance(void) = 0;
     virtual std::string toString(void){ return "NoPlugIn"; };
     virtual void doSomething(void) = 0;
