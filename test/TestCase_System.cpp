@@ -109,7 +109,8 @@ TEST_F(TestCase_System, testExamplePlugInManager)
       EXPECT_TRUE( pManager->hasPlugIn( aPlugInId ) );
       ExamplePlugInBase* thePlugIn = ExamplePlugInManager::getRawPlugInInstanceById( aPlugInId ); // do not use with shared_ptr. and the instance is alive before terminate.
       if( thePlugIn ){
-        assert( thePlugIn->getType() == "ExamplePlugInBase" );
+        EXPECT_TRUE( thePlugIn->getType() == "ExamplePlugInBase" );
+        EXPECT_TRUE( thePlugIn->getTypeHash() == std::hash<std::string>()( "ExamplePlugInBase" ) );
         thePlugIn->doSomething();
       }
     }

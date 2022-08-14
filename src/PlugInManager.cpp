@@ -22,7 +22,7 @@
 
 IPlugIn::IPlugIn() : mLibraryNativeHandle(nullptr)
 {
-
+  mPlugInUndefinedTypeId = mPlugInTypeId = std::hash<std::string>()( PLUGIN_TYPE_UNDEFINED );
 }
 
 IPlugIn::~IPlugIn()
@@ -40,6 +40,16 @@ void IPlugIn::unload(void)
 {
   onUnload();
 }
+
+int64_t IPlugIn::getTypeHash(void)
+{
+  if( mPlugInUndefinedTypeId == mPlugInTypeId ){
+    mPlugInTypeId = std::hash<std::string>()( getType() );
+  }
+  return mPlugInTypeId;
+}
+
+
 
 IPlugInManager::IPlugInManager(std::string path) : mPlugInPath(path)
 {

@@ -22,6 +22,8 @@
 #include <vector>
 #include <memory>
 
+#define PLUGIN_TYPE_UNDEFINED "undefined"
+
 class IPlugIn
 {
 public:
@@ -33,7 +35,6 @@ public:
   virtual void onUnload(void) = 0;
   virtual std::string getId(void) = 0;
   virtual IPlugIn* newInstance(void) = 0;
-  virtual std::string getType(void){ return "undefined"; };
 
   // for PlugIn Manager
   virtual void load(void* libraryNativeHandle);
@@ -41,6 +42,16 @@ public:
 
 public:
   void* mLibraryNativeHandle;
+
+private:
+  int64_t mPlugInUndefinedTypeId;
+
+protected:
+  int64_t mPlugInTypeId;
+
+public:
+  virtual std::string getType(void){ return PLUGIN_TYPE_UNDEFINED; };
+  int64_t getTypeHash(void);
 };
 
 class IPlugInManagerAdmin
