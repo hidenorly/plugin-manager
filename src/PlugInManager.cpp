@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2021,2022 hidenorly
+  Copyright (C) 2021,2022,2025 hidenorly
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -171,8 +171,8 @@ void IPlugInManager::unregisterPlugIn(std::string plugInId)
     if( pPlugIn ){
       pPlugIn->unload();
       void* pHandle = pPlugIn->mLibraryNativeHandle ? pPlugIn->mLibraryNativeHandle : nullptr;
-      pPlugIn->mLibraryNativeHandle = nullptr;
-      if( 1 == pPlugIn.use_count() ){
+      if( pHandle && pPlugIn.use_count() == 0 ){
+        pPlugIn->mLibraryNativeHandle = nullptr;
         pPlugIn.reset();
         dlclose( pHandle );
       }
