@@ -82,9 +82,21 @@ public:
     std::cout << "ConcreteExamplePlugIn::doSomething" << std::endl;
   };
 };
+
+
+extern "C"
+{
+__attribute__ ((visibility ("default"))) void* getPlugInInstance(void)
+{
+  ConcreteExamplePlugIn* pInstance = new ConcreteExamplePlugIn();
+  return reinterpret_cast<void*>(dynamic_cast<IPlugIn*>(pInstance));
+}
+};
 ```
 
 Note that you should implement ```virtual IPlugIn* newInstance(void)``` as the above (return your your class's instance with ```new YourClass()``` ).
+
+And also you should implement ```getPlugInInstance``` as extern "C".
 
 
 
